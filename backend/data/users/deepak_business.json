@@ -1,0 +1,46 @@
+{
+  "user_id": "deepak_business",
+  "display_name": "Deepak Maharjan",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_days_ago": 1900,
+  "account_created": "2019-01-09",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 2000,
+  "contact": {
+    "phone": "+977-9851223344",
+    "email": "deepak.maharjan@example.np"
+  },
+  "known_imeis": [
+    "357004455667788",
+    "357004455667799"
+  ],
+  "safe_zones": [
+    {
+      "name": "Office - New Road, Kathmandu",
+      "lat": 27.7017,
+      "lon": 85.3106
+    },
+    {
+      "name": "Office - Pulchowk, Lalitpur",
+      "lat": 27.6795,
+      "lon": 85.3168
+    },
+    {
+      "name": "Home - Lakeside, Pokhara",
+      "lat": 28.2096,
+      "lon": 83.9588
+    }
+  ],
+  "last_login": {
+    "lat": 27.7017,
+    "lon": 85.3106
+  },
+  "last_login_hours_ago": 10,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "40-59",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

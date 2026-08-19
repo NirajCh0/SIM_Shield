@@ -1,0 +1,41 @@
+{
+  "user_id": "rekha_dual",
+  "display_name": "Rekha Tamang",
+  "operator": "SMART",
+  "operator_consent": true,
+  "sim_activation_days_ago": 880,
+  "account_created": "2022-02-11",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 950,
+  "contact": {
+    "phone": "+977-9862119900",
+    "email": "rekha.tamang@example.np"
+  },
+  "known_imeis": [
+    "354911223344556",
+    "354911223344567"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Kalanki, Kathmandu",
+      "lat": 27.6933,
+      "lon": 85.2816
+    },
+    {
+      "name": "Home - Kirtipur",
+      "lat": 27.6786,
+      "lon": 85.277
+    }
+  ],
+  "last_login": {
+    "lat": 27.6933,
+    "lon": 85.2816
+  },
+  "last_login_hours_ago": 4,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "25-39",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

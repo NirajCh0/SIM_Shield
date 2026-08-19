@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Exposure — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div id="shell"></div>
+
+  <div class="wrap" id="main" style="display:none">
+    <h1 style="margin:0 0 4px">Exposure</h1>
+    <p class="muted small" style="margin:0 0 20px">What a SIM swap on your number would put at
+      risk, and what SIMShield does to contain it while your SIM looks compromised.</p>
+
+    <!-- what is at stake -->
+    <div class="card reveal" id="balance-card">
+      <div class="row" style="gap:24px">
+        <div style="flex:1;min-width:200px">
+          <div class="small muted">Simulated funds at risk</div>
+          <div style="font-family:var(--font-display);font-size:42px;font-weight:600;
+                      letter-spacing:-0.6px;line-height:1.1;font-variant-numeric:tabular-nums"
+               id="balance">—</div>
+          <div class="small muted" id="held-note"></div>
+        </div>
+        <div id="frozen-banner"></div>
+      </div>
+      <p class="small muted" style="margin:14px 0 0">
+        <b>SIMShield is not a bank and holds no money.</b> This figure is a synthetic
+        stand-in for whatever a subscriber's banking app would expose — it exists so
+        the cost of a SIM swap is visible, and so the containment control below has
+        something to act on.
+      </p>
+    </div>
+
+    <!-- the containment control -->
+    <div class="sec-head"><i data-icon="sim"></i><h2>Cooling-off hold after a SIM change</h2></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">
+        The first large payment after a SIM change is the signature of an account being
+        drained: the attacker has the number, resets the password, and moves the money
+        before anyone notices. So for
+        <span class="mono" id="lookback-days">a few</span> days after any SIM change on
+        your number, a payment is <b>not refused and not allowed</b> — it is
+        <b>held</b>, and releasing it needs a code sent to your <b>email</b>, a channel
+        someone holding your phone number does not control.
+      </p>
+      <p class="small muted">
+        This is the control banks already apply after an operator reports a swap.
+        SIMShield demonstrates it end to end rather than describing it.
+      </p>
+      <div class="row" style="gap:10px;align-items:flex-end;margin-top:6px">
+        <div style="flex:1;min-width:180px">
+          <label for="txn-amount">Test payment amount (NPR)</label>
+          <input type="number" id="txn-amount" placeholder="45000" min="1" step="1" inputmode="numeric" />
+        </div>
+        <button id="btn-txn">Attempt payment</button>
+      </div>
+      <p class="small muted" style="margin:8px 0 0">
+        Try it before and after the SIM-swap trigger on your dashboard to see the same
+        amount treated differently.
+      </p>
+      <div class="banner hidden" id="txn-result" style="margin-top:14px"></div>
+    </div>
+
+    <!-- held payments need action -->
+    <div id="held-section" class="hidden">
+      <div class="sec-head"><i data-icon="clock"></i><h2>Held — waiting for your release</h2></div>
+      <div class="card" style="border-color:var(--orange)">
+        <p class="small muted" style="margin-top:0">These payments are paused because your SIM
+          changed recently. Releasing one needs a code sent to your email — a channel an
+          attacker holding your phone number does not control.</p>
+        <div id="held-list"></div>
+      </div>
+    </div>
+
+    <!-- what the hold has caught -->
+    <div class="sec-head"><i data-icon="clock"></i><h2>Recent attempts</h2></div>
+    <div class="card">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>When</th><th>Amount</th><th>Risk</th><th>Outcome</th><th></th></tr></thead>
+          <tbody id="txn-rows"></tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-bottom:0">
+        Kept only so you can see the hold working across several attempts. No merchant,
+        recipient or category is recorded — SIMShield has no reason to know what you buy.
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap hidden" id="need-login" style="text-align:center;padding-top:72px">
+    <h1>Sign in to continue.</h1>
+    <p class="muted">Your exposure view sits behind two-step verification.</p>
+    <a class="btn" href="/login">Sign in</a>
+  </div>
+
+  <!-- release modal -->
+  <div id="release-modal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h3 style="margin-top:0"><i data-icon="lock"></i> Release held payment</h3>
+      <p class="small muted" id="release-desc"></p>
+      <div class="banner hidden" id="release-demo-otp"></div>
+      <label for="release-code">Release code (from your email)</label>
+      <input type="text" id="release-code" maxlength="6" inputmode="numeric" class="otp-input" />
+      <div class="banner error hidden" id="release-err" style="margin-top:10px"></div>
+      <div class="row" style="gap:10px;margin-top:16px">
+        <button id="btn-release-confirm">Release</button>
+        <button class="ghost" id="btn-release-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">SIMShield is not a bank · every figure here is synthetic · releasing a hold needs an out-of-band code</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="pwa.js"></script>
+  <script src="/money.page.js"></script>
+</body>
+</html>

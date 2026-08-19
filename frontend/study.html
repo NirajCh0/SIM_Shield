@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIMShield - User Study</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="global-nav">
+    <div class="gn-inner">
+      <a class="gn-brand" href="/"><i data-icon="shieldCheck" data-icon-size="17"></i><span>SIMShield</span></a>
+      <a class="gn-link" data-page="home" href="/">Overview</a>
+      <a class="gn-link" data-page="detection" href="/detection">Detection</a>
+      <a class="gn-link" data-page="study" href="/study">User Study</a>
+      <a class="gn-link" data-page="metrics" href="/metrics">Evaluation</a>
+      <a class="gn-link" data-page="awareness" href="/awareness">Awareness</a>
+      <a class="gn-link" data-page="assistant" href="/assistant">Assistant</a>
+      <span class="gn-spacer"></span>
+      <span class="gn-pill" id="mode-pill">…</span>
+      <span id="nav-auth"></span>
+    </div>
+  </nav>
+  <div class="sub-nav">
+    <div class="sn-inner">
+      <span class="sn-title">User Study</span>
+      <span class="sn-links"><a href="/metrics">See aggregated results</a></span>
+    </div>
+  </div>
+
+  <div class="wrap" style="max-width:760px">
+    <h1 style="font-size:34px">Awareness &amp; usability study.</h1>
+    <p class="muted">A short, anonymous, mixed-methods study: a 5-question awareness quiz before and
+      after the awareness material, a standard SUS usability questionnaire, and open feedback.
+      No name is collected — you are stored under a random participant ID.</p>
+
+    <!-- STEP 1: consent -->
+    <div class="card" id="s-consent">
+      <h2>1 · Informed consent</h2>
+      <div class="banner ethics" id="ethics"></div>
+      <p class="small muted">This study will use your responses for the purposes below. Participation
+        is voluntary; there are no correct-answer penalties. Data is anonymous and retained only for
+        the study.</p>
+      <ul class="clean small" id="purposes"></ul>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input type="checkbox" id="agree" style="width:auto" />
+        I have read the above and give my informed consent (v<span id="cver"></span>).</label>
+      <div style="margin-top:14px"><button id="toPre" disabled>Begin →</button></div>
+    </div>
+
+    <!-- STEP 2: pre quiz -->
+    <div class="card hidden" id="s-pre">
+      <h2>2 · Awareness quiz (before)</h2>
+      <p class="small muted">Answer from what you know right now.</p>
+      <div id="preq"></div>
+      <div style="margin-top:14px"><button id="toLearn">Submit & read the guide →</button></div>
+    </div>
+
+    <!-- STEP 3: learn -->
+    <div class="card hidden" id="s-learn">
+      <h2>3 · Awareness material</h2>
+      <p class="small muted">Read this, then continue to the follow-up questions.</p>
+      <div id="learn"></div>
+      <div style="margin-top:14px"><button id="toPost">Continue →</button></div>
+    </div>
+
+    <!-- STEP 4: post quiz + SUS + feedback -->
+    <div class="card hidden" id="s-post">
+      <h2>4 · Follow-up</h2>
+      <h3>Awareness quiz (after)</h3>
+      <div id="postq"></div>
+
+      <h3>Usability (SUS) — rate 1 = strongly disagree … 5 = strongly agree</h3>
+      <div id="sus"></div>
+
+      <div class="grid cols-2">
+        <div><label>Confidence spotting a SIM swap — BEFORE (1–5)</label>
+          <input type="number" id="cb" min="1" max="5" value="3" /></div>
+        <div><label>Confidence spotting a SIM swap — AFTER (1–5)</label>
+          <input type="number" id="ca" min="1" max="5" value="4" /></div>
+      </div>
+      <label>What would you change or what confused you? (optional)</label>
+      <textarea id="feedback" rows="3" placeholder="Open feedback…"></textarea>
+      <div style="margin-top:14px"><button id="submit">Submit study →</button></div>
+    </div>
+
+    <!-- STEP 5: thanks -->
+    <div class="card hidden" id="s-done">
+      <h2><i data-icon="check" data-icon-size="17"></i> Thank you</h2>
+      <p id="thanks" class="muted"></p>
+      <a class="btn" href="/metrics">See aggregated results →</a>
+    </div>
+  </div>
+
+  <div class="foot">Consent-gated · anonymous · retained only for the study (see compliance.yaml)</div>
+
+  <script src="icons.js"></script>
+  <script src="script.js"></script>
+  <script src="/study.page.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Detection demo — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div id="shell"></div>
+
+  <div class="wrap">
+    <h1 style="font-size:32px;margin-bottom:6px">Score a login.</h1>
+    <p class="muted" style="max-width:660px">Run a built-in scenario or a custom login attempt.
+      SIMShield fuses four components — rule engine, behavioural signals, a Random Forest and an
+      Isolation Forest — into one 0–100 risk score and a decision, before any OTP is issued.</p>
+
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card">
+        <h3 style="margin-top:0"><i data-icon="target"></i> Login attempt</h3>
+        <label for="scenario">Demo scenario <span class="muted">— 40 cases, 10 per decision</span></label>
+        <select id="scenario"></select>
+        <p class="small muted" id="scenario-note" style="margin:6px 0 0"></p>
+
+        <label>User profile</label>
+        <select id="user"></select>
+
+        <div class="grid cols-2">
+          <div><label>Latitude</label><input type="text" id="lat" /></div>
+          <div><label>Longitude</label><input type="text" id="lon" /></div>
+        </div>
+        <label>Device IMEI</label>
+        <input type="text" id="imei" />
+        <div class="grid cols-2">
+          <div><label>Logins (24h)</label><input type="number" id="logins" value="1" /></div>
+          <div><label>Failed logins (24h)</label><input type="number" id="failed" value="0" /></div>
+        </div>
+        <label>Telecom signals (operator feed)</label>
+        <div class="row" style="gap:16px;margin-top:4px">
+          <label class="check-row"><input type="checkbox" id="imsi" /> IMSI change</label>
+          <label class="check-row"><input type="checkbox" id="iccid" /> ICCID change</label>
+          <label class="check-row"><input type="checkbox" id="ipc" /> IP change</label>
+        </div>
+        <div class="row" style="gap:10px;margin-top:20px">
+          <button id="run">Score this login</button>
+          <button class="ghost" id="reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0"><i data-icon="chart"></i> Result</h3>
+        <div id="empty" class="empty">
+          <div class="art-frame" style="border:0;background:transparent;padding:0" data-art="fusion"></div>
+          <p>Pick a scenario and press <b>Score this login</b>.</p>
+        </div>
+        <div id="result" class="hidden">
+          <div class="row" style="gap:16px">
+            <span id="decision" class="decision"></span>
+            <div style="flex:1;min-width:180px">
+              <div class="gauge"><span id="gauge"></span></div>
+              <div class="small muted" style="margin-top:5px">Risk score
+                <b id="score"></b> / 100 · <span id="mlflag"></span></div>
+            </div>
+          </div>
+
+          <h3>Why — in plain language</h3>
+          <ul class="clean" id="reasons"></ul>
+
+          <h3>Component breakdown</h3>
+          <div class="bars" id="bars"></div>
+
+          <h3>Behavioural red flags</h3>
+          <div id="flags"></div>
+
+          <div id="alertbox" class="banner hidden" style="margin-top:16px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">All data synthetic · every decision is written to a pseudonymised, hash-chained audit log</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="/detection.page.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+# =============================================================================
+# SIMShield - Detection Engine Configuration
+# -----------------------------------------------------------------------------
+# Everything that tunes the risk DECISION lives here so it can be changed
+# WITHOUT touching code (config-driven design). The privacy/ethics policy lives
+# separately in compliance.yaml. All data in this project is SYNTHETIC.
+# =============================================================================
+
+# --- Fusion: how the three sub-scores combine into the final risk score ------
+# Each component produces a 0-100 risk score. The final score is a weighted
+# average over the components AVAILABLE at scoring time (if the ML model isn't
+# loaded, its weight is dropped and the rest are renormalised).
+# Calibrated against the 40-scenario suite. behavioral_score was 0.20, which
+# left it unable to matter: the component saturates at 100, so even a maximally
+# suspicious profile (never-seen device + burst of failed attempts + 01:40)
+# contributed only 20 points and landed in MONITOR — passed through with a flag
+# when a bank should plainly step up authentication. The ML components were
+# trimmed to compensate because their telecom features (IMSI/ICCID/SIM-type
+# change, OTP gap) are frequently absent and default to safe values, so they
+# under-react precisely when the evidence is behavioural.
+fusion:
+  rule_score: 0.40        # SIM integrity + location (classic, transparent)
+  behavioral_score: 0.30  # rule-based behavioral flags (explainable)
+  ml_score: 0.20          # Random Forest trained on the 100k telecom dataset (supervised)
+  anomaly_score: 0.10     # Isolation Forest 'unlike normal traffic' (unsupervised)
+
+# --- Component 1: rule-based SIM + location score ----------------------------
+rule_engine:
+  weights:
+    # Calibrated against the 40-scenario suite (scenarios.py). Was 0.55/0.45,
+    # which let a LOCAL attacker escape: a SIM activated hours ago scores the
+    # maximum 100 on integrity, but with distance ~0 the rule component still
+    # capped at 55, so "swapped today, draining fast" reached only 77 and fell
+    # short of BLOCK. SIM recency IS the defining SIM-swap signal; distance is
+    # contextual — and in Nepal distance also produces false positives for the
+    # large migrant-worker population who legitimately log in from abroad.
+    sim_integrity: 0.70   # how recently the SIM was activated
+    location: 0.30        # distance from the user's safe zones
+  sim_integrity_tiers:
+    - { max_days: 3,    score: 100 }   # activated in last 3 days -> critical
+    - { max_days: 7,    score: 80 }
+    - { max_days: 30,   score: 50 }
+    - { max_days: 180,  score: 20 }
+    - { max_days: null, score: 5 }     # established SIM
+  location:
+    safe_radius_km: 2.0
+    sigmoid: { L: 100, k: 0.2, x0: 25 }   # L / (1 + e^(-k*(dist_km - x0)))
+
+# --- Component 2: behavioral signals (rule-based, additive) ------------------
+behavioral:
+  cap: 100
+  rules:
+    imei_change:        { points: 60, label: "Device (IMEI) changed since last login" }
+    impossible_travel:  { points: 70, label: "Impossible travel speed between logins" }
+    new_device:         { points: 35, label: "Login from a never-before-seen device" }
+    odd_hour:           { points: 15, label: "Login at an unusual hour (00:00-05:00)" }
+    rapid_logins:       { points: 25, label: "Many login attempts in a short window" }
+    failed_login_burst: { points: 30, label: "Several recent failed login attempts" }
+    imsi_change:        { points: 55, label: "IMSI changed (new SIM identity on the network)" }
+    iccid_change:       { points: 45, label: "ICCID changed (physical SIM card replaced)" }
+    multiple_sim_swaps: { points: 40, label: "Multiple SIM changes in the last 30 days" }
+    ip_change:          { points: 20, label: "Login from a new IP / network" }
+    # Operator-fed: the network says the SIM is somewhere the login is not.
+    # Weighted high because a phone and its SIM travel together — a genuine
+    # traveller never trips this, so a hit means the person signing in is not
+    # holding the handset that owns the number.
+    sim_location_mismatch: { points: 65, label: "SIM is not where this login claims to be" }
+  impossible_travel_kmh: 800
+  rapid_login_threshold: 5
+  rapid_login_window_min: 10
+  failed_login_threshold: 3
+  odd_hour_start: 0
+  odd_hour_end: 5
+  multi_swap_threshold: 2   # >= this many SIM changes in 30d trips the flag
+  sim_location_mismatch_km: 100   # operator SIM location vs claimed login location
+
+# --- Mobile-operator integration (SIMULATED) ---------------------------------
+# The adapter boundary defined in engine/operator_adapter.py. See
+# engine/operator_camara.py for what a real GSMA Open Gateway / CAMARA
+# integration would require — none of it exists in this project.
+#
+# NOTE there is deliberately NO `fail_open` key here. Failing open on degraded
+# operator data is structural: engine/operator.py computes the mismatch flag
+# only on the usable branch, so no configuration can make an outage raise a
+# risk score. A key would imply the guarantee is a setting; it is not.
+operator:
+  adapter: mock            # mock | camara (camara is a non-operational placeholder)
+  timeout_ms: 800          # a login must not wait longer than this for an operator
+  max_age_seconds: 300     # older readings are STALE and are ignored, not trusted
+  rate_limit_per_minute: 30    # per subject, mirroring a real operator quota
+  mismatch_km: 100         # distance at which SIM area and claimed area disagree
+
+# --- WebAuthn / passkeys (improvement #5) -------------------------------------
+# The only second factor here that a SIM swap does not defeat: a private key on
+# the subscriber's device, bound to this origin, that never travels over the
+# mobile network.
+#
+# `origins` is an exact allowlist — a credential is bound to an origin, and
+# accepting any other one would defeat the phishing resistance that is the whole
+# point. `rp_id` must be the registered domain in production; browsers permit
+# WebAuthn on localhost without TLS, which is why the demo works unmodified.
+#
+# NOTE: attestation is parsed but NOT verified (see engine/webauthn.py), so the
+# authenticator model is not proven. That is a deliberate, documented limit.
+webauthn:
+  enabled: true
+  rp_id: "localhost"
+  rp_name: "SIMShield"
+  origins:
+    - "http://localhost:5000"
+    - "http://127.0.0.1:5000"
+  user_verification: "preferred"   # discouraged | preferred | required
+  timeout_ms: 60000
+
+# --- Decision thresholds (applied to the final fused 0-100 score) ------------
+# Thresholds are set from the OBSERVED score distribution of the 40-scenario
+# suite rather than picked by hand, so each boundary sits in a real gap between
+# classes. Measured spread at the current fusion weights:
+#     ALLOW    6.1 - 10.3      MONITOR  18.6 - 25.1
+#     VERIFY  22.5 - 76.5      BLOCK    85.3 - 97.9
+# The ALLOW/MONITOR gap (10.3 -> 18.6) and the VERIFY/BLOCK gap (76.5 -> 85.3)
+# are clean. MONITOR/VERIFY overlap slightly, which is expected: those two
+# classes genuinely shade into each other. Re-tune on real data before any
+# production use — these values are calibrated to synthetic fixtures.
+decision_thresholds:
+  allow_max: 14      #   0-14  -> ALLOW
+  monitor_max: 26    #  15-26  -> MONITOR (allow but flag)
+  verify_max: 80     #  27-80  -> VERIFY (step-up auth / biometric)
+  # 81-100 -> BLOCK
+
+# --- Localisation: Kathmandu Valley context (synthetic) ----------------------
+locale:
+  country: "Nepal"
+  region: "Kathmandu Valley"
+  timezone: "Asia/Kathmandu"
+  operators:
+    - { code: "NTC",   name: "Nepal Telecom" }
+    - { code: "NCELL", name: "Ncell Axiata" }
+    - { code: "SMART", name: "Smart Cell" }
+  default_safe_zones:
+    - { name: "Thamel, Kathmandu",        lat: 27.7154, lon: 85.3123 }
+    - { name: "Patan, Lalitpur",          lat: 27.6766, lon: 85.3250 }
+    - { name: "Bhaktapur Durbar Square",  lat: 27.6722, lon: 85.4298 }
+
+# --- Awareness / alerting ----------------------------------------------------
+awareness:
+  alert_on_decision: ["VERIFY", "BLOCK"]
+  channels: ["sms", "email"]   # simulated only - nothing is actually sent
+  alert_log: "data/alerts.log"
+
+# --- Authentication / 2FA ------------------------------------------------------
+# Email OTP is the second factor. In demo mode nothing is actually mailed:
+# codes land in the simulated outbox, and demo_reveal_otp surfaces the code in
+# the API response so the flow can be demonstrated end-to-end. Set it to false
+# (and configure SIMSHIELD_SMTP_* env vars) for real Gmail delivery.
+auth:
+  otp_ttl_minutes: 5
+  otp_max_attempts: 5
+  session_ttl_hours: 12
+  lockout_after_failures: 5
+  lockout_minutes: 15
+  # NOTE: OTP reveal is NO LONGER controlled here. It is gated by the
+  # environment (SIMSHIELD_ENV + SIMSHIELD_DEMO_REVEAL_OTP) so it can never be
+  # switched on in production by editing a YAML file. See engine/settings.py.
+  default_notification_prefs: { email: true, sms: true, push: false }
+  # sliding-window rate limits per IP (+email where relevant); prototype uses
+  # an in-memory store, production would use Redis / the reverse proxy
+  # Every OTP-issuing and OTP-consuming flow is limited (finding F7). Without
+  # limits on resend/unfreeze/release an attacker could mint or brute-force
+  # codes indefinitely, and OTP entropy alone (10^6) is not a defence.
+  rate_limits:
+    login:         { limit: 15, window_seconds: 300 }
+    verify_otp:    { limit: 10, window_seconds: 300 }
+    register:      { limit: 10, window_seconds: 3600 }
+    reset:         { limit: 5,  window_seconds: 900 }
+    reset_confirm: { limit: 10, window_seconds: 900 }
+    resend_otp:    { limit: 5,  window_seconds: 600 }
+    unfreeze:      { limit: 5,  window_seconds: 900 }
+    txn_release:   { limit: 10, window_seconds: 900 }
+    study_submit:  { limit: 5,  window_seconds: 3600 }
+    # An appeal opens a case for a human, so the resource being protected is
+    # the analyst queue, not a secret (improvement #3).
+    appeal_submit: { limit: 5,  window_seconds: 3600 }
+    # Passkey ceremonies issue server-side challenges; capping them stops the
+    # challenge store being used as a memory sink (improvement #5).
+    passkey:       { limit: 30, window_seconds: 600 }
+    recovery_login: { limit: 5,  window_seconds: 900 }
+
+# --- Transaction anomaly detection --------------------------------------------
+transactions:
+  min_history: 5           # personal-baseline rules need at least this many txns
+  zscore_flag: 3.0         # amount z-score that counts as 'unusually large'
+  max_multiple: 3.0        # amount > this x personal max -> extra points
+  burst_window_min: 10
+  burst_count: 3
+  sim_change_lookback_days: 7
+  flag_threshold: 50       # anomaly score >= this -> flag + alert
+  # Cooling-off hold: inside the post-SIM-change window, transactions at or
+  # above this amount are HELD and require an email OTP to release.
+  hold_threshold_amount: 10000
+
+# --- Gamification (security-awareness engagement) -------------------------------
+gamification:
+  points:
+    study_completed: 50
+    quiz_perfect: 25
+    chatbot_question: 5
+    checklist_item: 10
+    reviewed_alert: 10
+    scam_spotted: 5      # per correct answer in the 'Spot the scam' trainer
+  badges:
+    - { id: "aware",     label: "Security Aware",   min_points: 25,  icon: "🔰" }
+    - { id: "vigilant",  label: "Vigilant",         min_points: 75,  icon: "🛡️" }
+    - { id: "guardian",  label: "Account Guardian", min_points: 150, icon: "🏆" }
+
+# --- ML model ----------------------------------------------------------------
+# The model is trained on the REAL 100k-row synthetic telecom dataset
+# (sim_swap_fraud_dataset_100000.csv). SIMShield derives these 11 features from
+# the user profile + login attempt at scoring time (see engine/telecom_features.py).
+# Feature ORDER here MUST match train_model.py and telecom_features.build().
+ml:
+  model_path: "models/rf_model.joblib"
+  iso_model_path: "models/iso_model.joblib"   # unsupervised companion model
+  dataset_path: "data/sim_swap_fraud_dataset_100000.csv"
+  target_column: "sim_swap_flag"
+  features:
+    - sim_swap_time_gap_minutes
+    - device_change_flag
+    - sim_type_change_flag
+    - imsi_change_flag
+    - iccid_change_flag
+    - otp_and_sim_change_geo_hash_length
+    - recent_sim_activation_days
+    - num_sim_changes_last_30d
+    - previous_sim_holder_tenure_days
+    - account_age_days
+    - ip_change_flag

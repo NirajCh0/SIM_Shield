@@ -1,0 +1,77 @@
+{
+  "name": "SIMShield — SIM-Swap Protection",
+  "short_name": "SIMShield",
+  "description": "Detects risky banking logins before an SMS OTP is sent, and teaches you to recognise SIM-swap fraud. English and नेपाली.",
+  "id": "/dashboard",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f5f7",
+  "theme_color": "#000000",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "finance",
+    "security",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Freeze my account",
+      "short_name": "Freeze",
+      "description": "Jump straight to the emergency freeze control",
+      "url": "/defence",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ask the assistant",
+      "short_name": "Assistant",
+      "description": "Open the bilingual SIM-swap awareness assistant",
+      "url": "/assistant",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "What's at risk",
+      "short_name": "Exposure",
+      "description": "See what a SIM swap would cost you and what is on hold",
+      "url": "/money",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

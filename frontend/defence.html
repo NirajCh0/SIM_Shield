@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Defence — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div id="shell"></div>
+
+  <div class="wrap" id="main" style="display:none">
+    <h1 style="margin:0 0 4px">Defence</h1>
+    <p class="muted small" style="margin:0 0 20px">Your controls, your devices, and what the
+      operator feed has seen on your number.</p>
+
+    <!-- EMERGENCY -->
+    <div class="card reveal" id="freeze-card" style="border-width:1px">
+      <div class="row" style="gap:16px">
+        <span id="freeze-icon"></span>
+        <div style="flex:1;min-width:220px">
+          <h3 style="margin:0" id="freeze-title"></h3>
+          <p class="small muted" style="margin:4px 0 0" id="freeze-desc"></p>
+        </div>
+        <div id="freeze-action"></div>
+      </div>
+      <div id="unfreeze-form" class="hidden" style="margin-top:16px;
+           border-top:1px solid var(--divider-soft);padding-top:16px">
+        <div class="banner hidden" id="freeze-demo-otp" style="margin-bottom:10px"></div>
+        <label for="unfreeze-code">One-time code from your email</label>
+        <input type="text" id="unfreeze-code" maxlength="6" inputmode="numeric" class="otp-input" />
+        <div class="banner error hidden" id="freeze-err" style="margin-top:10px"></div>
+        <div style="margin-top:14px"><button id="btn-unfreeze-confirm">Confirm unfreeze</button></div>
+      </div>
+    </div>
+
+    <!-- SIGN-IN LOCATIONS -->
+    <div class="sec-head"><i data-icon="pin"></i><h2>Where you signed in</h2>
+      <span class="small muted right">area only — no coordinates stored</span></div>
+    <div class="card">
+      <div id="loc-list"></div>
+      <p class="small muted" style="margin-bottom:0">
+        SIMShield records a coarse <b>area and distance band</b>, never your exact
+        position — enough for you to spot a sign-in that wasn't you, too little to
+        track your movements. Turn it off with
+        <code class="mono">store_login_area: false</code> in <code class="mono">compliance.yaml</code>.
+      </p>
+    </div>
+
+    <!-- SIM EVENTS -->
+    <div class="sec-head"><i data-icon="sim"></i><h2>SIM events on your number</h2></div>
+    <div class="card">
+      <div id="sim-list"></div>
+      <p class="small muted" style="margin-bottom:0">In production these stream from your
+        operator's HLR/HSS records. In this prototype they're synthetic.</p>
+    </div>
+
+    <!-- DEVICES + SESSIONS -->
+    <div class="grid cols-2">
+      <div>
+        <div class="sec-head"><i data-icon="phone"></i><h2>Devices</h2></div>
+        <div class="card"><div id="device-list"></div></div>
+      </div>
+      <div>
+        <div class="sec-head"><i data-icon="monitor"></i><h2>Active sessions</h2></div>
+        <div class="card">
+          <div id="session-list"></div>
+          <p class="small muted" style="margin-bottom:0">Revoking kills the token server-side,
+            immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAFE ZONES -->
+    <div class="sec-head"><i data-icon="pin"></i><h2>Safe zones</h2>
+      <span class="small muted right">up to 5</span></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">Sign-ins far from these places score higher in
+        the pre-OTP check. Distance is measured with the Haversine formula and passed through a
+        sigmoid curve, so risk rises smoothly rather than snapping at a boundary.</p>
+      <div id="zone-list" style="margin:12px 0"></div>
+      <div class="row" style="gap:10px;align-items:flex-end">
+        <div style="flex:1;min-width:200px">
+          <label for="zone-preset">Add a place</label>
+          <select id="zone-preset">
+            <option value="">— choose —</option>
+            <option value="Thamel, Kathmandu|27.7154|85.3123">Thamel, Kathmandu</option>
+            <option value="Patan, Lalitpur|27.6766|85.3250">Patan, Lalitpur</option>
+            <option value="Bhaktapur Durbar Square|27.6722|85.4298">Bhaktapur Durbar Square</option>
+            <option value="New Road, Kathmandu|27.7017|85.3106">New Road, Kathmandu</option>
+            <option value="Boudha, Kathmandu|27.7215|85.3620">Boudha, Kathmandu</option>
+            <option value="Kalanki, Kathmandu|27.6933|85.2816">Kalanki, Kathmandu</option>
+            <option value="Lakeside, Pokhara|28.2096|83.9588">Lakeside, Pokhara</option>
+          </select>
+        </div>
+        <button class="subtle" id="btn-zone-add">Add</button>
+        <button class="ghost" id="btn-zones-save">Save zones</button>
+        <span class="small muted hidden" id="zones-saved">saved</span>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="sec-head"><i data-icon="bell"></i><h2>Alerts &amp; trusted contact</h2></div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="item"><div class="grow"><span class="title">Email alerts</span>
+          <div class="desc muted">One-time codes always use email.</div></div>
+          <label class="switch"><input type="checkbox" id="pref-email"><span class="slider"></span></label></div>
+        <div class="item"><div class="grow"><span class="title">SMS alerts</span>
+          <div class="desc muted">Simulated here; production uses an SMS gateway.</div></div>
+          <label class="switch"><input type="checkbox" id="pref-sms"><span class="slider"></span></label></div>
+        <div class="item"><div class="grow"><span class="title">Push notifications</span>
+          <div class="desc muted">Reaches you even if your SMS is compromised.
+            <span id="push-state"></span></div></div>
+          <label class="switch"><input type="checkbox" id="pref-push"><span class="slider"></span></label></div>
+        <div id="push-enable-row" class="hidden" style="margin:4px 0 8px">
+          <button class="subtle small" id="btn-push-enable">Allow device notifications</button>
+          <span class="small muted" id="push-msg"></span>
+        </div>
+        <label for="pref-lang">Language / भाषा</label>
+        <select id="pref-lang">
+          <option value="en">English</option>
+          <option value="ne">नेपाली</option>
+        </select>
+        <div style="margin-top:16px"><button class="ghost" id="btn-prefs">Save preferences</button>
+          <span class="small muted hidden" id="prefs-saved">saved</span></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0"><i data-icon="users"></i> Trusted contact</h3>
+        <p class="small muted">On a <b>critical</b> alert this person is emailed too. If an
+          attacker holds both your phone number and your inbox, this is the channel that still
+          gets through.</p>
+        <label for="pref-trusted">Their email address</label>
+        <input type="email" id="pref-trusted" placeholder="family.member@example.np" />
+        <p class="small muted" id="trusted-now" style="margin:8px 0 0"></p>
+      </div>
+    </div>
+
+    <!-- PHONE-INDEPENDENT FACTORS (improvement #5) -->
+    <div class="sec-head"><i data-icon="lock"></i><h2>Sign-in that survives a SIM swap</h2></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">
+        Codes sent by SMS arrive at whoever holds your number. If your SIM is
+        swapped, that is the attacker. The two options below never travel over
+        the mobile network, so they still work when your number does not.
+      </p>
+      <p id="factors-advice" class="small" style="font-weight:600"></p>
+
+      <div class="row" style="gap:24px;flex-wrap:wrap;margin-top:12px">
+        <div style="flex:1;min-width:260px">
+          <h3 style="margin:0 0 6px">Passkeys</h3>
+          <p class="small muted" style="margin:0 0 10px">
+            A key held by this device or a security key. It cannot be phished
+            and cannot be texted to anyone.
+          </p>
+          <div id="passkey-list"></div>
+          <button class="btn" id="add-passkey" type="button">Add a passkey</button>
+          <p class="small muted" id="passkey-msg" style="margin:8px 0 0"></p>
+        </div>
+
+        <div style="flex:1;min-width:260px">
+          <h3 style="margin:0 0 6px">Recovery codes</h3>
+          <p class="small muted" style="margin:0 0 10px">
+            Ten single-use codes to print and keep somewhere that is not your
+            phone. Generating a new set cancels the old one.
+          </p>
+          <p class="small" id="recovery-status"></p>
+          <button class="btn ghost" id="gen-recovery" type="button">
+            Generate new codes
+          </button>
+          <div id="recovery-codes" class="hidden" style="margin-top:12px">
+            <p class="small" style="font-weight:600;margin:0 0 6px">
+              Save these now — they are shown once and cannot be retrieved again.
+            </p>
+            <pre id="recovery-list" style="background:var(--tile);padding:12px;
+                 border-radius:10px;overflow-x:auto;font-size:15px"></pre>
+          </div>
+        </div>
+      </div>
+      <p class="small muted" style="margin:14px 0 0">
+        Prototype limits: the authenticator model is not verified (no
+        attestation checking), and passkeys need HTTPS on a real domain outside
+        this local demo.
+      </p>
+    </div>
+
+    <!-- APPEALS (improvement #3) -->
+    <div class="sec-head"><i data-icon="shield"></i><h2>Disagree with a decision</h2></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">
+        If we made you verify or blocked a sign-in that really was you, tell us.
+        A person reviews it, and confirmed mistakes are counted and used to
+        measure how often the system gets this wrong.
+      </p>
+      <div id="appealable-box"></div>
+      <label class="small" for="appeal-statement" style="display:block;margin-top:10px">
+        What happened?
+      </label>
+      <textarea id="appeal-statement" rows="3" style="width:100%"
+                placeholder="For example: I was in Doha for work — that sign-in was me."></textarea>
+      <button class="btn" id="submit-appeal" type="button" style="margin-top:10px">
+        Submit for review
+      </button>
+      <p class="small muted" id="appeal-msg" style="margin:8px 0 0"></p>
+      <div id="appeal-list" style="margin-top:14px"></div>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="sec-head"><i data-icon="clock"></i><h2>Full activity log</h2></div>
+    <div class="card"><div id="activity-list" style="max-height:360px;overflow-y:auto"></div></div>
+  </div>
+
+  <div class="wrap hidden" id="need-login" style="text-align:center;padding-top:72px">
+    <h1>Sign in to continue.</h1>
+    <p class="muted">Your security controls sit behind two-step verification.</p>
+    <a class="btn" href="/login">Sign in</a>
+  </div>
+
+  <div class="foot">Identifiers are pseudonymised · phone numbers AES-256-encrypted · actions are audit-logged</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="pwa.js"></script>
+  <script src="/defence.page.js"></script>
+</body>
+</html>

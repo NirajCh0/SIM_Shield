@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Awareness — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div id="shell"></div>
+
+  <div class="wrap">
+    <div class="row" style="margin-bottom:6px">
+      <h1 style="margin:0">Awareness</h1>
+      <button class="subtle small right" id="lang-toggle">नेपालीमा</button>
+    </div>
+    <p class="muted small" style="margin:0 0 22px">Detection catches the attack. Knowing the
+      signs stops you handing over the code in the first place.</p>
+
+    <!-- progress (signed in only) -->
+    <div class="card reveal hidden" id="progress-card">
+      <div class="row" style="gap:20px">
+        <div style="flex:1;min-width:200px">
+          <div class="row"><h3 style="margin:0"><i data-icon="trophy"></i> Your progress</h3>
+            <span class="status-chip right" id="points-chip"></span></div>
+          <div id="badge-row" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--divider-soft);margin-top:14px;padding-top:14px">
+        <div class="small muted" style="margin-bottom:6px">Security checklist — 10 points each</div>
+        <div id="checklist"></div>
+      </div>
+    </div>
+
+    <!-- what it is -->
+    <div class="sec-head"><i data-icon="info"></i><h2>What a SIM swap actually is</h2></div>
+    <div class="grid" style="grid-template-columns: 1fr 0.9fr; align-items:center">
+      <div class="card reveal">
+        <p id="what" style="margin-top:0;font-size:16px;color:var(--ink-80)"></p>
+      </div>
+      <div class="art-frame reveal parallax" data-depth="0.05" data-art="theft"></div>
+    </div>
+
+    <div class="art-frame reveal" style="margin-top:20px" data-art="timeline"></div>
+    <p class="small muted" style="text-align:center;margin-top:8px">How fast it moves once
+      the swap succeeds — minutes, not days.</p>
+
+    <!-- signs / protect / attacked -->
+    <div class="grid cols-3" style="margin-top:8px">
+      <div class="card reveal">
+        <h3 style="margin-top:0"><i data-icon="alert"></i> Warning signs</h3>
+        <ul class="clean" id="signs"></ul>
+      </div>
+      <div class="card reveal">
+        <h3 style="margin-top:0"><i data-icon="lock"></i> Protect yourself</h3>
+        <ul class="clean" id="protect"></ul>
+      </div>
+      <div class="card reveal">
+        <h3 style="margin-top:0"><i data-icon="bell"></i> If you're attacked</h3>
+        <ul class="clean" id="attacked"></ul>
+      </div>
+    </div>
+
+    <!-- SPOT THE SCAM -->
+    <div class="sec-head"><i data-icon="target"></i><h2>Spot the scam</h2>
+      <button class="subtle small right" id="scam-restart">New round</button></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">Real-world message shapes, fabricated senders.
+        Decide whether each one is a scam — you earn 5 points per correct answer.</p>
+      <div id="scam-box">
+        <div class="banner" id="scam-msg" style="font-size:15.5px;line-height:1.55"></div>
+        <div class="row" style="margin-top:14px;gap:10px">
+          <button id="scam-yes" class="danger small">It's a scam</button>
+          <button id="scam-no" class="ghost small">Looks legitimate</button>
+          <span class="small muted right" id="scam-progress"></span>
+        </div>
+        <div class="banner hidden" id="scam-verdict" style="margin-top:12px"></div>
+        <div style="margin-top:12px">
+          <button id="scam-next" class="small hidden">Next message
+            <i data-icon="arrowRight" data-icon-size="16"></i></button>
+        </div>
+      </div>
+      <div id="scam-done" class="hidden">
+        <div class="banner okay" id="scam-score"></div>
+      </div>
+    </div>
+
+    <!-- PLAYBOOK -->
+    <div class="sec-head"><i data-icon="book"></i><h2>Incident-response playbook</h2></div>
+    <div class="card">
+      <p class="small muted" style="margin-top:0">Five phases, in order. In a real SIM swap the
+        first ten minutes matter most.</p>
+      <div id="pb-list" style="margin-top:10px"></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="sec-head"><i data-icon="phone"></i><h2>Who to call in Nepal</h2></div>
+    <div class="grid cols-4">
+      <a class="qa reveal" href="tel:1498"><i data-icon="phone" data-icon-size="22"></i>
+        <span>Nepal Telecom</span><span class="qa-sub">1498</span></a>
+      <a class="qa reveal" href="tel:9005"><i data-icon="phone" data-icon-size="22"></i>
+        <span>Ncell</span><span class="qa-sub">9005</span></a>
+      <a class="qa reveal" href="tel:4242"><i data-icon="phone" data-icon-size="22"></i>
+        <span>Smart Cell</span><span class="qa-sub">4242</span></a>
+      <a class="qa danger reveal" href="tel:100"><i data-icon="alert" data-icon-size="22"></i>
+        <span>Cyber Bureau</span><span class="qa-sub">100 · Bhotahity</span></a>
+    </div>
+    <p class="small muted" style="margin-top:10px">Verify these against your operator's official
+      site — numbers change, and this is a prototype.</p>
+
+    <div class="row" style="justify-content:center;margin:36px 0 0">
+      <a class="btn ghost" href="/study">Take the awareness study
+        <i data-icon="arrowRight" data-icon-size="17"></i></a>
+    </div>
+  </div>
+
+  <div class="foot">Bilingual awareness content · playbook available in English and नेपाली</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="pwa.js"></script>
+  <script src="/awareness.page.js"></script>
+</body>
+</html>

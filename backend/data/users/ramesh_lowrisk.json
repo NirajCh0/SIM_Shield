@@ -1,0 +1,35 @@
+{
+  "user_id": "ramesh_lowrisk",
+  "display_name": "Ramesh Adhikari",
+  "operator": "SMART",
+  "operator_consent": true,
+  "sim_activation_date": "2020-01-10",
+  "account_created": "2019-01-05",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 2000,
+  "contact": {
+    "phone": "+977-9861445566",
+    "email": "ramesh.adhikari@example.np"
+  },
+  "known_imeis": [
+    "353112223334445"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Kirtipur",
+      "lat": 27.6786,
+      "lon": 85.277
+    }
+  ],
+  "last_login": {
+    "lat": 27.6786,
+    "lon": 85.277
+  },
+  "last_login_hours_ago": 1,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "40-59",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

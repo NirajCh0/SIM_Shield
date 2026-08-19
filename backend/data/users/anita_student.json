@@ -1,0 +1,40 @@
+{
+  "user_id": "anita_student",
+  "display_name": "Anita Gurung",
+  "operator": "SMART",
+  "operator_consent": true,
+  "sim_activation_days_ago": 1240,
+  "account_created": "2021-08-14",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 1400,
+  "contact": {
+    "phone": "+977-9861004411",
+    "email": "anita.gurung@example.np"
+  },
+  "known_imeis": [
+    "354820061122334"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Kirtipur",
+      "lat": 27.6786,
+      "lon": 85.277
+    },
+    {
+      "name": "Office - New Road, Kathmandu",
+      "lat": 27.7017,
+      "lon": 85.3106
+    }
+  ],
+  "last_login": {
+    "lat": 27.6786,
+    "lon": 85.277
+  },
+  "last_login_hours_ago": 6,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "18-24",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

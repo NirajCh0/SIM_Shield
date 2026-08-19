@@ -1,0 +1,35 @@
+{
+  "user_id": "manish_swapped",
+  "display_name": "Manish Lama",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_days_ago": 0,
+  "account_created": "2019-11-12",
+  "num_sim_changes_last_30d": 3,
+  "previous_sim_holder_tenure_days": 2,
+  "contact": {
+    "phone": "+977-9849911223",
+    "email": "manish.lama@example.np"
+  },
+  "known_imeis": [
+    "359110022334455"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Thamel, Kathmandu",
+      "lat": 27.7154,
+      "lon": 85.3123
+    }
+  ],
+  "last_login": {
+    "lat": 27.7154,
+    "lon": 85.3123
+  },
+  "last_login_hours_ago": 2,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "25-39",
+    "region": "abroad",
+    "settlement": "urban"
+  }
+}

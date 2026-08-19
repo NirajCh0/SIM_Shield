@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Assistant — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div id="shell"></div>
+
+  <div class="wrap" style="max-width:860px">
+    <div class="row" style="margin-bottom:6px">
+      <div>
+        <h1 style="margin:0">Assistant</h1>
+        <p class="muted small" style="margin:4px 0 0" id="tagline">Ask about SIM-swap fraud —
+          in English or नेपाली. Signed in, it can explain your own alerts.</p>
+      </div>
+      <button class="subtle small right" id="lang-toggle">नेपालीमा</button>
+    </div>
+
+    <div class="chat-page card reveal">
+      <div class="chat-log" id="log" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+      <div class="chat-suggest" id="suggest"></div>
+
+      <form class="chat-compose" id="compose" autocomplete="off">
+        <input id="input" type="text" aria-label="Message"
+               placeholder="Type your question…" />
+        <button type="submit" id="send" aria-label="Send">
+          <i data-icon="send" data-icon-size="19"></i></button>
+      </form>
+    </div>
+
+    <div class="grid cols-3" style="margin-top:20px">
+      <div class="card reveal"><h3 style="margin-top:0"><i data-icon="eye"></i> Explains your alerts</h3>
+        <p class="small muted">Ask “explain my alert” and it reads your latest alert and the
+          reasons behind the score in plain language.</p></div>
+      <div class="card reveal"><h3 style="margin-top:0"><i data-icon="book"></i> Walks you through recovery</h3>
+        <p class="small muted">Ask “recovery steps” for the full incident playbook, phase by
+          phase, with the numbers to call.</p></div>
+      <div class="card reveal"><h3 style="margin-top:0"><i data-icon="users"></i> Escalates to humans</h3>
+        <p class="small muted">Ask to “talk to the fraud team” and it files a critical
+          escalation on your account for a human to review.</p></div>
+    </div>
+
+    <p class="small muted" style="margin-top:18px">Every exchange is logged to <code
+      class="mono">chat_logs</code> so the fraud team can see what users struggle with. The
+      matcher is rule-based and auditable by design — a security assistant should never give
+      an answer nobody can trace.</p>
+  </div>
+
+  <div class="foot">Bilingual, rule-based assistant · conversations are logged for evaluation</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="pwa.js"></script>
+  <script src="/assistant.page.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+# Fraud-analyst reason-code taxonomy (improvement #2).
+#
+# WHY A FIXED TAXONOMY RATHER THAN FREE TEXT
+# "Human-in-the-loop" is only a control if the human's decision can be reviewed.
+# A free-text note cannot be counted, cannot be compared between analysts, and
+# cannot tell you whether the detector is wrong — it can only tell you that
+# somebody typed something. A closed set of codes makes every resolution
+# countable, gives the false-positive rate a denominator, and lets a second
+# analyst disagree with a specific claim.
+#
+# Each code declares the OUTCOME it implies. An analyst picks a code; the
+# outcome follows from it, so an analyst cannot record "false positive" while
+# citing a reason that means the opposite (engine/cases.py enforces this).
+#
+# `counts_as_false_positive` is what engine/feedback.py measures the reported
+# FPR against. It is deliberately narrow: only a decision that stopped a
+# genuine, authorised subscriber counts. "Inconclusive" never does — treating
+# uncertainty as vindication is how a fraud team talks itself into a bad model.
+
+version: "1.0"
+
+outcomes:
+  confirmed_fraud:
+    label: "Confirmed fraud"
+    description: "Evidence supports an actual account-takeover attempt."
+    closes_case: true
+  false_positive:
+    label: "False positive"
+    description: "A genuine, authorised subscriber was wrongly stopped."
+    closes_case: true
+  legitimate_but_risky:
+    label: "Legitimate but risky"
+    description: "The subscriber was genuine, but the signal was reasonable."
+    closes_case: true
+  inconclusive:
+    label: "Inconclusive"
+    description: "Not enough evidence either way. Never counted as a correct or an incorrect decision."
+    closes_case: true
+  duplicate:
+    label: "Duplicate"
+    description: "Already handled under another case."
+    closes_case: true
+
+codes:
+  # --- confirmed fraud -------------------------------------------------------
+  - code: FR01
+    label: "SIM swap confirmed with operator"
+    outcome: confirmed_fraud
+    category: sim
+    requires_evidence: true
+    counts_as_false_positive: false
+    guidance: "Operator confirmed the number moved to a SIM the subscriber did not request."
+  - code: FR02
+    label: "Subscriber confirms they did not attempt this sign-in"
+    outcome: confirmed_fraud
+    category: account
+    requires_evidence: true
+    counts_as_false_positive: false
+    guidance: "Reached the subscriber out of band — not by the number under investigation."
+  - code: FR03
+    label: "Credential stuffing / password compromise"
+    outcome: confirmed_fraud
+    category: account
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "Failed-login burst then success; SIM was never moved."
+  - code: FR04
+    label: "Social-engineering / OTP disclosure"
+    outcome: confirmed_fraud
+    category: account
+    requires_evidence: true
+    counts_as_false_positive: false
+    guidance: "Subscriber was tricked into passing on a code."
+
+  # --- false positives (the ones that count against the detector) ------------
+  - code: FP01
+    label: "Legitimate travel by the subscriber"
+    outcome: false_positive
+    category: location
+    requires_evidence: true
+    counts_as_false_positive: true
+    guidance: "The subscriber genuinely was where the login came from. Common for migrant workers — check before assuming."
+  - code: FP02
+    label: "Subscriber's own new or replacement device"
+    outcome: false_positive
+    category: device
+    requires_evidence: true
+    counts_as_false_positive: true
+    guidance: "New IMEI, but the subscriber bought the handset."
+  - code: FP03
+    label: "Subscriber-requested SIM replacement (lost or damaged)"
+    outcome: false_positive
+    category: sim
+    requires_evidence: true
+    counts_as_false_positive: true
+    guidance: "A genuine reissue looks identical to a swap in the data. Verify with the operator."
+  - code: FP04
+    label: "Operator data was wrong or stale"
+    outcome: false_positive
+    category: operator
+    requires_evidence: true
+    counts_as_false_positive: true
+    guidance: "The mismatch came from bad partner data, not from the subscriber."
+  - code: FP05
+    label: "Detector error with no external cause"
+    outcome: false_positive
+    category: model
+    requires_evidence: false
+    counts_as_false_positive: true
+    guidance: "Use when nothing about the subscriber explains the score. This is the code that should drive model work."
+
+  # --- legitimate but the signal was fair ------------------------------------
+  - code: LG01
+    label: "Genuine subscriber, step-up verification succeeded"
+    outcome: legitimate_but_risky
+    category: account
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "VERIFY worked as intended: risk was real, the subscriber cleared it."
+  - code: LG02
+    label: "Shared or family device"
+    outcome: legitimate_but_risky
+    category: device
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "Authorised use by a household member."
+
+  # --- neither ---------------------------------------------------------------
+  - code: IN01
+    label: "Subscriber unreachable"
+    outcome: inconclusive
+    category: process
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "No contact after the escalation window. Do NOT record this as a correct decision."
+  - code: IN02
+    label: "Insufficient evidence"
+    outcome: inconclusive
+    category: process
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "Genuinely undecidable on the available signals."
+  - code: DU01
+    label: "Duplicate of an existing case"
+    outcome: duplicate
+    category: process
+    requires_evidence: false
+    counts_as_false_positive: false
+    guidance: "Cross-reference the surviving case id in the note."
+
+# Service-level targets, in hours from case creation. Used to compute the
+# overdue queue on the fraud desk. These are demonstration values.
+sla_hours:
+  critical: 1
+  high: 4
+  medium: 24
+  low: 72
+
+# A case opens automatically when the detector reaches one of these decisions.
+auto_open_on_decision:
+  BLOCK: critical
+  VERIFY: medium

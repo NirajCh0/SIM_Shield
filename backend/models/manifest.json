@@ -1,0 +1,16 @@
+{
+  "_comment": "Integrity manifest for SIMShield ML artefacts. Regenerate with `python train_model.py`. engine/artifacts.py refuses to load any artefact whose hash does not match.",
+  "artifacts": {
+    "rf_model.joblib": {
+      "sha256": "f0c014d961830e099b2543e63fd23adf3ab4f9347bf7af522aacbb15939a9aa8",
+      "bytes": 30835113
+    },
+    "iso_model.joblib": {
+      "sha256": "3324b539f2ee426a3f070faa74698b1ff1c1c33667794901562ae630480d70eb",
+      "bytes": 3902937
+    }
+  },
+  "generated_at": "2026-08-14T16:55:36",
+  "generated_by": "train_model.py",
+  "dataset": "sim_swap_fraud_dataset_100000.csv"
+}

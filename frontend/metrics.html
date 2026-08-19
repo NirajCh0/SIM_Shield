@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIMShield - Evaluation</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="global-nav">
+    <div class="gn-inner">
+      <a class="gn-brand" href="/"><i data-icon="shieldCheck" data-icon-size="17"></i><span>SIMShield</span></a>
+      <a class="gn-link" data-page="home" href="/">Overview</a>
+      <a class="gn-link" data-page="detection" href="/detection">Detection</a>
+      <a class="gn-link" data-page="study" href="/study">User Study</a>
+      <a class="gn-link" data-page="metrics" href="/metrics">Evaluation</a>
+      <a class="gn-link" data-page="awareness" href="/awareness">Awareness</a>
+      <a class="gn-link" data-page="assistant" href="/assistant">Assistant</a>
+      <span class="gn-spacer"></span>
+      <span class="gn-pill" id="mode-pill">…</span>
+      <span id="nav-auth"></span>
+    </div>
+  </nav>
+  <div class="sub-nav">
+    <div class="sn-inner">
+      <span class="sn-title">Evaluation</span>
+      <span class="sn-links"><a href="/api/study/export.csv"><i data-icon="download" data-icon-size="17"></i> Export study CSV</a></span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h1 style="font-size:34px">Mixed-methods evaluation.</h1>
+    <p class="muted">Quantitative detection metrics (ML on the 100k dataset + end-to-end scenarios)
+      and the user-study results (quantitative + qualitative). Regenerate with
+      <code class="mono">python evaluate.py</code>.</p>
+
+    <div id="noreport" class="banner hidden">No evaluation report found yet. Run
+      <code class="mono">python evaluate.py</code> in <code class="mono">backend/</code>, then refresh.</div>
+
+    <h2 style="margin-top:22px">1 · Detection performance (ML model)</h2>
+    <div class="grid cols-3" id="det-kpis"></div>
+    <div class="card" id="cm-card" style="margin-top:16px">
+      <h3>Confusion matrix <span class="muted small">[[TN, FP], [FN, TP]]</span></h3>
+      <div id="cm"></div>
+    </div>
+
+    <h2 style="margin-top:26px">2 · End-to-end pipeline (demo scenarios)</h2>
+    <div class="card"><table id="scen"><thead><tr>
+      <th>Scenario</th><th>Expected</th><th>Decision</th><th>Risk</th><th>Match</th></tr></thead>
+      <tbody></tbody></table></div>
+
+    <h2 style="margin-top:26px">3 · User study (awareness + usability)</h2>
+    <div class="grid cols-3" id="study-kpis"></div>
+    <div class="grid cols-2" style="margin-top:16px">
+      <div class="card">
+        <h3>Knowledge gain</h3>
+        <div class="bars" id="gainbars"></div>
+        <p class="small muted" id="studynote"></p>
+      </div>
+      <div class="card">
+        <h3>Qualitative feedback (thematic coding input)</h3>
+        <ul class="clean small" id="feedback"></ul>
+        <a class="btn ghost small" href="/api/study/export.csv"><i data-icon="download" data-icon-size="17"></i> Export study CSV</a>
+      </div>
+    </div>
+
+    <div class="card" id="integrity" style="margin-top:22px">
+      <h3>Accountability</h3>
+      <div id="audit" class="small muted">Checking audit-chain integrity…</div>
+    </div>
+  </div>
+
+  <div class="foot">All figures from synthetic data & voluntary study responses</div>
+
+  <script src="icons.js"></script>
+  <script src="script.js"></script>
+  <script src="/metrics.page.js"></script>
+</body>
+</html>

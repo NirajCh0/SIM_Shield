@@ -1,0 +1,35 @@
+{
+  "user_id": "bikash_migrant",
+  "display_name": "Bikash Thapa",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_days_ago": 1500,
+  "account_created": "2020-03-22",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 1600,
+  "contact": {
+    "phone": "+977-9847766554",
+    "email": "bikash.thapa@example.np"
+  },
+  "known_imeis": [
+    "356220011223344"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Kalanki, Kathmandu",
+      "lat": 27.6933,
+      "lon": 85.2816
+    }
+  ],
+  "last_login": {
+    "lat": 27.6933,
+    "lon": 85.2816
+  },
+  "last_login_hours_ago": 30,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "25-39",
+    "region": "abroad",
+    "settlement": "urban"
+  }
+}

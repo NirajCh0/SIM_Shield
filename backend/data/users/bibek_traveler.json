@@ -1,0 +1,35 @@
+{
+  "user_id": "bibek_traveler",
+  "display_name": "Bibek Thapa",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_date": "2021-09-01",
+  "account_created": "2020-06-15",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 1200,
+  "contact": {
+    "phone": "+977-9851110099",
+    "email": "bibek.thapa@example.np"
+  },
+  "known_imeis": [
+    "357921035123456"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Patan, Lalitpur",
+      "lat": 27.6766,
+      "lon": 85.325
+    }
+  ],
+  "last_login": {
+    "lat": 27.6766,
+    "lon": 85.325
+  },
+  "last_login_hours_ago": 48,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "25-39",
+    "region": "outside_valley",
+    "settlement": "rural"
+  }
+}

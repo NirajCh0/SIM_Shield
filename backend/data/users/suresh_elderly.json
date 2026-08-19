@@ -1,0 +1,35 @@
+{
+  "user_id": "suresh_elderly",
+  "display_name": "Suresh Shrestha",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_days_ago": 2600,
+  "account_created": "2016-05-02",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 2600,
+  "contact": {
+    "phone": "+977-9841557788",
+    "email": "suresh.shrestha@example.np"
+  },
+  "known_imeis": [
+    "356701099887766"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Boudha, Kathmandu",
+      "lat": 27.7215,
+      "lon": 85.362
+    }
+  ],
+  "last_login": {
+    "lat": 27.7215,
+    "lon": 85.362
+  },
+  "last_login_hours_ago": 20,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "60+",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

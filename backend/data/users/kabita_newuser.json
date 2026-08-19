@@ -1,0 +1,35 @@
+{
+  "user_id": "kabita_newuser",
+  "display_name": "Kabita Basnet",
+  "operator": "NCELL",
+  "operator_consent": true,
+  "sim_activation_days_ago": 64,
+  "account_created": "2026-06-20",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 70,
+  "contact": {
+    "phone": "+977-9807788990",
+    "email": "kabita.basnet@example.np"
+  },
+  "known_imeis": [
+    "351009988776655"
+  ],
+  "safe_zones": [
+    {
+      "name": "Office - Pulchowk, Lalitpur",
+      "lat": 27.6795,
+      "lon": 85.3168
+    }
+  ],
+  "last_login": {
+    "lat": 27.6795,
+    "lon": 85.3168
+  },
+  "last_login_hours_ago": 18,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "18-24",
+    "region": "outside_valley",
+    "settlement": "rural"
+  }
+}

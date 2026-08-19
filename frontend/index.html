@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>SIMShield — SIM-Swap Detection & Awareness</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="SIMShield" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="shell"></div>
+
+  <!-- HERO -->
+  <section class="tile parchment bg-orbs">
+    <div class="tile-inner">
+      <div class="grid" style="grid-template-columns: 1.05fr 0.95fr; align-items:center; gap:48px">
+        <div>
+          <div class="step reveal">Kathmandu Valley · Digital-banking subscribers</div>
+          <h1 class="hero-display reveal">Stop the SIM swap<br />before the OTP is sent.</h1>
+          <p class="lead reveal" style="max-width:520px">
+            If a fraudster owns your phone number, your bank's SMS code goes to them.
+            SIMShield scores every login <b>before</b> that code is ever issued — and
+            teaches you to spot the attack, in English and नेपाली.
+          </p>
+          <div class="row reveal" style="gap:12px;margin-top:28px">
+            <a class="btn" href="/register">Create account</a>
+            <a class="btn ghost" href="/detection">See it score a fraud attempt</a>
+          </div>
+          <div class="row reveal" style="gap:18px;margin-top:24px;font-size:13px;color:var(--ink-48)">
+            <span class="row" style="gap:6px"><i data-icon="lock" data-icon-size="15"></i> AES-256 at rest</span>
+            <span class="row" style="gap:6px"><i data-icon="eye" data-icon-size="15"></i> Explainable scores</span>
+            <span class="row" style="gap:6px"><i data-icon="users" data-icon-size="15"></i> Human review</span>
+          </div>
+        </div>
+        <div class="art-frame reveal parallax" data-depth="0.05" data-art="simcard"></div>
+      </div>
+      <div class="banner ethics reveal" id="ethics-banner" style="margin-top:40px">Loading scope statement…</div>
+    </div>
+  </section>
+
+  <!-- LIVE STATUS STRIP -->
+  <section class="tile light" style="padding-top:48px;padding-bottom:48px">
+    <div class="tile-inner">
+      <div class="grid cols-4" id="status-strip"></div>
+    </div>
+  </section>
+
+  <!-- THE ATTACK -->
+  <section class="tile dark bg-mesh" id="attack">
+    <div class="tile-inner">
+      <div class="grid" style="grid-template-columns: 0.95fr 1.05fr; align-items:center; gap:48px">
+        <div class="art-frame reveal parallax" data-depth="0.05" data-art="theft"></div>
+        <div>
+          <div class="step reveal" style="color:var(--primary-on-dark)">The attack</div>
+          <h2 class="reveal">Your number is the key. They steal the key.</h2>
+          <p class="muted reveal" style="font-size:18px;max-width:520px">
+            A fraudster convinces NTC, Ncell or Smart Cell to move your number onto a SIM
+            they control. Nothing about your password changes — but every code your bank
+            sends now arrives on their phone.
+          </p>
+          <ul class="clean reveal" id="signs" style="margin-top:20px"></ul>
+        </div>
+      </div>
+
+      <!-- how fast it moves -->
+      <div class="art-frame reveal" style="margin-top:44px;max-width:760px;margin-inline:auto"
+           data-art="timeline"></div>
+      <p class="small muted reveal" style="text-align:center;margin-top:10px">
+        Twenty-four minutes from SIM change to an emptied account — which is why the
+        check has to happen before the code is sent, not after.</p>
+    </div>
+  </section>
+
+  <!-- THE DEFENCE -->
+  <section class="tile light bg-scan" id="how">
+    <div class="tile-inner">
+      <div style="text-align:center;max-width:640px;margin:0 auto">
+        <div class="step reveal">The defence</div>
+        <h2 class="reveal">Four signals. One decision.</h2>
+        <p class="lead reveal" style="font-size:19px">
+          Every login is scored 0–100 by fusing transparent rules with two machine-learning
+          models — then thresholded into a decision a human can always overturn.
+        </p>
+      </div>
+      <div class="art-frame reveal parallax" data-depth="0.04"
+           style="max-width:640px;margin:32px auto 0" data-art="fusion"></div>
+      <div class="grid cols-4" style="margin-top:40px">
+        <div class="card reveal"><h3 style="margin-top:0"><i data-icon="target"></i> Rule engine</h3>
+          <p class="small muted">SIM-activation recency plus Haversine distance from your safe
+            zones through a sigmoid curve. Fully inspectable.</p></div>
+        <div class="card reveal"><h3 style="margin-top:0"><i data-icon="alert"></i> Behaviour</h3>
+          <p class="small muted">Explainable red flags: device change, impossible travel,
+            odd-hour logins, repeated SIM changes.</p></div>
+        <div class="card reveal"><h3 style="margin-top:0"><i data-icon="chart"></i> Random Forest</h3>
+          <p class="small muted">Supervised classifier over 11 telecom features, trained on
+            100,000 synthetic records.</p></div>
+        <div class="card reveal"><h3 style="margin-top:0"><i data-icon="sparkle"></i> Isolation Forest</h3>
+          <p class="small muted">Unsupervised model trained only on normal traffic — catches
+            patterns no label ever described.</p></div>
+      </div>
+      <div class="row reveal" style="justify-content:center;gap:10px;margin-top:36px">
+        <span class="decision d-ALLOW">ALLOW</span>
+        <span class="decision d-MONITOR">MONITOR</span>
+        <span class="decision d-VERIFY">VERIFY</span>
+        <span class="decision d-BLOCK">BLOCK</span>
+      </div>
+      <p class="small muted reveal" style="text-align:center;margin-top:14px">
+        VERIFY and BLOCK never auto-punish — they step up verification and notify a human.</p>
+    </div>
+  </section>
+
+  <!-- THE SYMPTOM -->
+  <section class="tile dark-2 bg-orbs">
+    <div class="tile-inner">
+      <div class="grid" style="grid-template-columns: 1fr 1fr; align-items:center; gap:48px">
+        <div>
+          <div class="step reveal" style="color:var(--primary-on-dark)">Know the moment</div>
+          <h2 class="reveal">Sudden “No Service” is not a glitch.</h2>
+          <p class="muted reveal" style="font-size:18px;max-width:500px">
+            Losing mobile signal for no reason is the one symptom a victim can actually see.
+            If it happens unexpectedly, treat it as an emergency: call your operator, and
+            freeze your account before anything else.
+          </p>
+          <a class="btn reveal" href="/awareness" style="margin-top:22px">Read the playbook</a>
+        </div>
+        <div class="art-frame reveal parallax" data-depth="0.06" data-art="signal"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET — editorial, image-first cards -->
+  <section class="tile parchment bg-mesh">
+    <div class="tile-inner">
+      <div style="text-align:center"><div class="step reveal">Your account, guarded</div>
+        <h2 class="reveal">Security that explains itself.</h2></div>
+
+      <div class="chip-row reveal" id="feature-chips" style="margin:24px auto 20px;max-width:720px;
+           justify-content:center"></div>
+
+      <div class="grid cols-3" id="feature-grid" style="margin-top:8px"></div>
+
+      <div class="row reveal" style="justify-content:center;margin-top:40px">
+        <a class="btn" href="/register">Create your account <i data-icon="arrowRight" data-icon-size="17"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">SIMShield · defensive prototype · all data synthetic · local-only processing ·
+    pseudonymised identifiers, AES-256 at rest, hash-chained audit log</div>
+
+  <script src="icons.js"></script>
+  <script src="illustrations.js"></script>
+  <script src="script.js"></script>
+  <script src="shell.js"></script>
+  <script src="pwa.js"></script>
+  <script src="/index.page.js"></script>
+</body>
+</html>

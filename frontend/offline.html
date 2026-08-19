@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Offline — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <div class="wrap narrow" style="padding-top:40px">
+    <div class="step">No connection</div>
+    <h1 style="font-size:32px">You're offline.</h1>
+    <p class="lead" style="font-size:19px">SIMShield can't reach the server, so live
+      risk scores and alerts are unavailable. The emergency guidance below works
+      without a connection.</p>
+
+    <div class="banner error" style="margin:20px 0">
+      <i data-icon="alert" data-icon-size="17"></i> <b>If your phone also shows “No Service” and you didn't expect it</b>, treat this
+      as a possible SIM swap and act now — an attacker with your number receives your
+      bank's SMS codes.
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0"><i data-icon="alert" data-icon-size="17"></i> First 10 minutes</h3>
+      <ol class="small" style="color:var(--ink-80);padding-left:20px;line-height:1.9">
+        <li>Call your operator from another phone and ask them to <b>suspend the new SIM
+          and restore yours</b>.</li>
+        <li>Call your bank's hotline (printed on the back of your card) and ask to
+          <b>freeze the account</b>.</li>
+        <li><b>Never read out an OTP</b> — a code you didn't request means an attack is
+          already in progress.</li>
+        <li>From a trusted device, change your banking and email passwords.</li>
+      </ol>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-top:0"><i data-icon="phone" data-icon-size="17"></i> Nepal contacts</h3>
+      <div class="item"><div class="grow"><span class="title">Nepal Telecom (NTC)</span></div>
+        <a class="btn small" href="tel:1498">1498</a></div>
+      <div class="item"><div class="grow"><span class="title">Ncell</span></div>
+        <a class="btn small" href="tel:9005">9005</a></div>
+      <div class="item"><div class="grow"><span class="title">Smart Cell</span></div>
+        <a class="btn small" href="tel:4242">4242</a></div>
+      <div class="item"><div class="grow"><span class="title">Nepal Police Cyber Bureau</span>
+        <div class="desc muted">Bhotahity, Kathmandu</div></div>
+        <a class="btn small" href="tel:100">100</a></div>
+      <p class="small muted" style="margin-bottom:0">Verify current numbers with your
+        operator's official site when you're back online.</p>
+    </div>
+
+    <div style="margin-top:24px;text-align:center">
+      <button id="btn-retry">Try again</button>
+    </div>
+  </div>
+
+  <div class="foot">Offline mode · emergency guidance is cached on your device</div>
+
+  <!-- icons.js is cached in the service-worker shell, so this resolves offline -->
+  <script src="icons.js"></script>
+  <script src="/offline.page.js"></script>
+</body>
+</html>

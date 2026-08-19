@@ -1,0 +1,35 @@
+{
+  "user_id": "sita_swapped",
+  "display_name": "Sita Karki",
+  "operator": "NCELL",
+  "operator_consent": true,
+  "account_created": "2021-03-18",
+  "num_sim_changes_last_30d": 2,
+  "previous_sim_holder_tenure_days": 3,
+  "contact": {
+    "phone": "+977-9812345642",
+    "email": "sita.karki@example.np"
+  },
+  "known_imeis": [
+    "359881030314159"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Patan, Lalitpur",
+      "lat": 27.6766,
+      "lon": 85.325
+    }
+  ],
+  "last_login": {
+    "lat": 27.6766,
+    "lon": 85.325
+  },
+  "sim_activation_days_ago": 1,
+  "last_login_hours_ago": 1,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "40-59",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

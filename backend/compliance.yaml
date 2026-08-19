@@ -1,0 +1,94 @@
+# =============================================================================
+# SIMShield - Privacy, Ethics & Compliance Configuration
+# -----------------------------------------------------------------------------
+# Owned by the Data Protection Officer / compliance team, separate from the
+# fraud team's detection tuning (config.yaml). This is the DEFENSIVE,
+# config-driven policy layer: change the privacy posture WITHOUT touching code.
+#
+# The pattern (regulation-as-config) is adapted from MNSF's global_regulations
+# concept - purely the compliance idea; none of its offensive tooling is used.
+# =============================================================================
+
+# --- Privacy-preserving identifier handling ----------------------------------
+# Direct identifiers (IMEI, phone, email) are NEVER stored or logged in the
+# clear. They are salted-hashed (pseudonymised) for correlation, and masked for
+# any human-facing display. Set a real secret salt via the SIMSHIELD_SALT env
+# var in production; the default below is for the demo only.
+privacy:
+  pseudonymise_identifiers: true
+  # Pseudonymisation is HMAC-SHA-256 keyed by SIMSHIELD_PSEUDONYM_SECRET
+  # (environment only — see .env.example). The previous `default_salt` published
+  # here was removed: a public salt over an ~8-digit identifier space is an
+  # index, not a pseudonym. See SECURITY_REMEDIATION.md findings F9 and F11.
+  pseudonym_algorithm: "hmac-sha256"
+  pseudonym_bits: 128
+  mask_pii_in_responses: true      # e.g. +977-98XXXXXX42, s***@example.np
+  mask_pii_in_logs: true
+  # Data minimisation: only these attempt fields may be persisted to any log.
+  # Everything else is used in-memory for scoring and then discarded.
+  loggable_attempt_fields:
+    - decision
+    - risk_score
+    - timestamp
+  drop_raw_location_after_scoring: true   # keep only distance-from-safe-zone
+  # Sign-in locations shown back to the subscriber ("was that me in Pokhara?")
+  # are a genuine security benefit, but a raw coordinate trail would turn the
+  # app into a movement history. The compromise: store only a COARSE area label
+  # and a distance BAND (engine/geo.coarse_area) - never lat/lon. Set
+  # store_login_area to false to disable the feature entirely.
+  store_login_area: true
+  login_area_retention_days: 90
+
+# --- Consent (opt-in) --------------------------------------------------------
+# Scoring a login is a security-legitimate-interest activity, but the awareness
+# study and any storage of study responses require explicit informed consent.
+consent:
+  require_for_study: true
+  # Network SIM lookups are personal data about a named subscriber, so consent
+  # is checked at the adapter boundary before any lookup runs
+  # (engine/compliance.py -> operator_consent_state). A profile that does not
+  # state a decision resolves to UNKNOWN, which does NOT permit a lookup: the
+  # absence of a record is not agreement. Every synthetic profile therefore
+  # carries an explicit `operator_consent` field.
+  require_for_operator_lookup: true
+  require_for_scoring: false        # security control; documented in privacy notice
+  consent_version: "1.0"
+  purposes:
+    - "Detect SIM-swap fraud on banking logins (security)"
+    - "Educate you about SIM-swap warning signs (awareness)"
+    - "Improve the system via anonymous, aggregated evaluation (research)"
+
+# --- Data retention ----------------------------------------------------------
+# Retention is enforced by compliance.enforce_retention(); anything older than
+# the window is purged. Short by design - minimum needed to investigate fraud.
+retention:
+  audit_log_days: 90
+  alert_log_days: 90
+  study_responses_days: 365
+  # Appeals contain the subscriber's own account of what happened, so they are
+  # personal data with a purpose that ends once the appeal is answered and the
+  # feedback statistics are derived (improvement #3).
+  appeal_days: 365         # research data, retained for the study only
+  purge_on_startup: true
+
+# --- Audit trail (accountability) --------------------------------------------
+# Every decision writes a tamper-evident, hash-chained audit record (each entry
+# includes the previous entry's hash). Identifiers are pseudonymised. This gives
+# accountability without exposing PII.
+audit:
+  enabled: true
+  audit_log: "data/audit.log"
+  hash_chain: true
+
+# --- Ethics posture (surfaced in the UI and API) -----------------------------
+ethics:
+  scope: >
+    SIMShield is a DEFENSIVE detection and user-awareness prototype. It does not
+    perform, simulate, or assist any SIM-swap / interception attack. It only
+    scores how risky a login looks and educates users. All phone numbers, SIMs,
+    IMEIs, IMSIs and locations in this project are SYNTHETIC.
+  data_statement: "No real customer or telecom data is present. Processing is local-only."
+  human_in_the_loop: true            # VERIFY/BLOCK escalate to a human step, never auto-punish
+  explainable: true                  # every score ships with plain-language reasons
+  right_to_explanation: true         # GDPR Art. 22-style: user can see why they were flagged
+  no_offensive_capability: true

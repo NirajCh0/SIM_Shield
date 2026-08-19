@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fraud desk — SIMShield</title>
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="parchment">
+  <nav class="global-nav">
+    <div class="gn-inner">
+      <a class="gn-brand" href="/"><i data-icon="shieldCheck" data-icon-size="17"></i><span>SIMShield</span></a>
+      <a class="gn-link" data-page="home" href="/">Overview</a>
+      <a class="gn-link" data-page="detection" href="/detection">Detection</a>
+      <a class="gn-link" data-page="metrics" href="/metrics">Evaluation</a>
+      <a class="gn-link" data-page="awareness" href="/awareness">Awareness</a>
+      <a class="gn-link" data-page="assistant" href="/assistant">Assistant</a>
+      <span class="gn-spacer"></span>
+      <span class="gn-pill" id="mode-pill">…</span>
+      <span id="nav-auth"></span>
+    </div>
+  </nav>
+  <div class="sub-nav">
+    <div class="sn-inner">
+      <span class="sn-title">Fraud desk</span>
+      <span class="sn-links">
+        <a href="#queue">Alert queue</a>
+        <a href="#users">Subscribers</a>
+        <a href="#outbox">Outbox</a>
+        <a href="#chat">Chat logs</a>
+      </span>
+    </div>
+  </div>
+
+  <div class="wrap" id="main" style="display:none">
+    <h1>Fraud-team dashboard</h1>
+    <div class="banner" id="audit-banner">Checking audit-chain integrity…</div>
+
+    <div class="grid cols-4" style="margin-top:24px" id="kpis"></div>
+
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card">
+        <h3 style="margin-top:0"><i data-icon="chart" data-icon-size="17"></i> Alerts — last 7 days</h3>
+        <div id="chart-days" class="bars"></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0"><i data-icon="chart" data-icon-size="17"></i> Pre-OTP login decisions</h3>
+        <div id="chart-decisions" class="bars"></div>
+        <p class="small muted" id="txn-summary" style="margin-bottom:0"></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px" id="queue">
+      <div class="row">
+        <h3 style="margin:0"><i data-icon="alert" data-icon-size="17"></i> Alert queue</h3>
+        <select id="filter-status" class="right" style="width:auto">
+          <option value="">all statuses</option>
+          <option value="new">new</option>
+          <option value="escalated">escalated</option>
+          <option value="acknowledged">acknowledged</option>
+          <option value="resolved">resolved</option>
+        </select>
+      </div>
+      <div class="table-scroll" style="margin-top:12px">
+        <table>
+          <thead><tr><th>When</th><th>Subscriber</th><th>Type</th><th>Severity</th>
+            <th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="alert-rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CASE QUEUE WITH REASON CODES (improvement #2) -->
+    <div class="card" style="margin-top:24px" id="cases">
+      <div class="row">
+        <h3 style="margin:0">Case queue</h3>
+        <select id="filter-case-status" class="right" style="width:auto">
+          <option value="">All open</option>
+          <option value="open">Open</option>
+          <option value="investigating">Investigating</option>
+          <option value="awaiting_customer">Awaiting customer</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+      <p class="small muted" style="margin:6px 0 0">
+        A case must be closed with a reason code from the taxonomy — that is what
+        makes the false-positive rate below measurable rather than assumed.
+      </p>
+      <div id="case-stats" class="row" style="gap:18px;flex-wrap:wrap;margin:10px 0"></div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Opened</th><th>Subscriber</th><th>Title</th>
+            <th>Severity</th><th>Status</th><th>Outcome</th><th></th></tr></thead>
+          <tbody id="case-rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card hidden" style="margin-top:24px" id="case-detail">
+      <div class="row"><h3 style="margin:0" id="case-title"></h3>
+        <button class="subtle small right" id="case-close">Close</button></div>
+      <div id="case-meta" class="small muted" style="margin-top:4px"></div>
+      <div id="case-notes" style="margin-top:10px;max-height:260px;overflow-y:auto"></div>
+      <div id="case-resolve-form" style="margin-top:14px">
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:2;min-width:280px">
+            <label class="small" for="case-reason">Reason code</label>
+            <select id="case-reason" style="width:100%"></select>
+            <p class="small muted" id="case-reason-help" style="margin:4px 0 0"></p>
+          </div>
+          <div style="flex:2;min-width:240px">
+            <label class="small" for="case-evidence">Evidence (what you checked)</label>
+            <input id="case-evidence" type="text" style="width:100%"
+                   placeholder="e.g. Called on the trusted contact number; confirmed travel">
+          </div>
+        </div>
+        <div class="row" style="gap:10px;margin-top:10px">
+          <button class="btn" id="case-resolve" type="button">Resolve with this code</button>
+          <button class="btn ghost" id="case-investigating" type="button">
+            Mark investigating</button>
+        </div>
+        <p class="small" id="case-msg" style="margin:8px 0 0"></p>
+      </div>
+    </div>
+
+    <!-- APPEALS QUEUE (improvement #3) -->
+    <div class="card" style="margin-top:24px" id="appeals">
+      <div class="row"><h3 style="margin:0">Subscriber appeals</h3></div>
+      <p class="small muted" style="margin:6px 0 10px">
+        Upholding an appeal means the detector was wrong, so it must be recorded
+        with a false-positive code. The system refuses a contradictory pairing.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Filed</th><th>Subscriber</th><th>Decision</th>
+            <th>Statement</th><th>Status</th><th></th></tr></thead>
+          <tbody id="appeal-rows"></tbody>
+        </table>
+      </div>
+      <div id="appeal-review" class="hidden" style="margin-top:12px;padding-top:12px;
+           border-top:1px solid var(--hairline)">
+        <h4 style="margin:0 0 8px" id="appeal-review-title"></h4>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1;min-width:200px">
+            <label class="small" for="appeal-decision">Decision</label>
+            <select id="appeal-decision" style="width:100%">
+              <option value="uphold">Uphold — the subscriber was right</option>
+              <option value="reject">Reject — the original decision stands</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:200px">
+            <label class="small" for="appeal-reason">Reason code</label>
+            <select id="appeal-reason" style="width:100%"></select>
+          </div>
+          <div style="flex:2;min-width:240px">
+            <label class="small" for="appeal-evidence">Evidence</label>
+            <input id="appeal-evidence" type="text" style="width:100%">
+          </div>
+        </div>
+        <button class="btn" id="appeal-submit" type="button" style="margin-top:10px">
+          Record decision</button>
+        <p class="small" id="appeal-review-msg" style="margin:8px 0 0"></p>
+      </div>
+    </div>
+
+    <!-- DRIFT & FAIRNESS MONITORING (improvement #4) -->
+    <div class="card" style="margin-top:24px" id="monitoring">
+      <div class="row"><h3 style="margin:0">Drift &amp; fairness monitoring</h3></div>
+      <p class="small muted" style="margin:6px 0 10px" id="monitoring-warning"></p>
+      <div class="grid cols-3" id="monitoring-tiles"></div>
+      <h4 style="margin:16px 0 6px">Measured false-positive rate (human-coded)</h4>
+      <div id="fpr-box"></div>
+      <h4 style="margin:16px 0 6px">Selection rate by cohort</h4>
+      <div id="fairness-box"></div>
+    </div>
+
+    <div class="card" style="margin-top:24px" id="users">
+      <h3 style="margin-top:0"><i data-icon="users" data-icon-size="17"></i> Subscribers <span class="muted small">— click a row to open
+        the case timeline</span></h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Operator</th><th>Points</th>
+            <th>Open alerts</th><th>Last login</th><th>Status</th><th></th></tr></thead>
+          <tbody id="user-rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card hidden" style="margin-top:24px" id="timeline-card">
+      <div class="row"><h3 style="margin:0" id="timeline-title"></h3>
+        <button class="subtle small right" id="timeline-close">Close</button></div>
+      <div id="timeline-list" style="margin-top:8px;max-height:420px;overflow-y:auto"></div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card" id="outbox">
+        <h3 style="margin-top:0"><i data-icon="send" data-icon-size="17"></i> Notification outbox <span class="muted small">(simulated deliveries)</span></h3>
+        <div class="table-scroll" style="max-height:380px;overflow-y:auto">
+          <table>
+            <thead><tr><th>When</th><th>Channel</th><th>To</th><th>Subject</th><th>Status</th></tr></thead>
+            <tbody id="outbox-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="chat">
+        <h3 style="margin-top:0"><i data-icon="chat" data-icon-size="17"></i> Chatbot logs</h3>
+        <div class="table-scroll" style="max-height:380px;overflow-y:auto">
+          <table>
+            <thead><tr><th>When</th><th>User</th><th>Lang</th><th>Query</th><th>Intent</th></tr></thead>
+            <tbody id="chat-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap hidden" id="need-admin" style="text-align:center;padding-top:80px">
+    <h1>Fraud-team access only.</h1>
+    <p class="muted">Sign in with an admin account (demo:
+      <span class="mono">fraud@simshield.np / Admin@1234</span>).</p>
+    <a class="btn" href="/login">Sign in →</a>
+  </div>
+
+  <div class="foot">Admin actions are themselves audit-logged · role-based access control enforced server-side</div>
+
+  <script src="icons.js"></script>
+  <script src="script.js"></script>
+  <script src="/admin.page.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "user_id": "nabin_newphone",
+  "display_name": "Nabin Karki",
+  "operator": "NTC",
+  "operator_consent": true,
+  "sim_activation_days_ago": 1100,
+  "account_created": "2021-06-05",
+  "num_sim_changes_last_30d": 0,
+  "previous_sim_holder_tenure_days": 1200,
+  "contact": {
+    "phone": "+977-9843322110",
+    "email": "nabin.karki@example.np"
+  },
+  "known_imeis": [
+    "356551122334455"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Bhaktapur",
+      "lat": 27.6722,
+      "lon": 85.4298
+    }
+  ],
+  "last_login": {
+    "lat": 27.6722,
+    "lon": 85.4298
+  },
+  "last_login_hours_ago": 14,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "25-39",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}

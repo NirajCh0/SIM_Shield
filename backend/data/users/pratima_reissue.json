@@ -1,0 +1,35 @@
+{
+  "user_id": "pratima_reissue",
+  "display_name": "Pratima Adhikari",
+  "operator": "NCELL",
+  "operator_consent": true,
+  "sim_activation_days_ago": 11,
+  "account_created": "2020-09-30",
+  "num_sim_changes_last_30d": 1,
+  "previous_sim_holder_tenure_days": 1450,
+  "contact": {
+    "phone": "+977-9803344556",
+    "email": "pratima.adhikari@example.np"
+  },
+  "known_imeis": [
+    "351778899001122"
+  ],
+  "safe_zones": [
+    {
+      "name": "Home - Patan, Lalitpur",
+      "lat": 27.6766,
+      "lon": 85.325
+    }
+  ],
+  "last_login": {
+    "lat": 27.6766,
+    "lon": 85.325
+  },
+  "last_login_hours_ago": 26,
+  "synthetic_cohort": {
+    "_note": "FICTIONAL attributes for fairness analysis only. This describes no real person and is not collected from anyone.",
+    "age_band": "40-59",
+    "region": "kathmandu_valley",
+    "settlement": "urban"
+  }
+}
