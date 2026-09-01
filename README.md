@@ -4,9 +4,7 @@
 Subscribers in the Kathmandu Valley, Nepal** — full-stack prototype with 2FA
 authentication, machine-learning risk scoring, a bilingual awareness chatbot,
 a fraud-team dashboard, privacy-preserving design, and a built-in mixed-methods
-user study. UI styled after the Apple design language documented in
-`DESIGN-apple.md` (single Action-Blue accent, alternating light/dark tiles,
-pill CTAs, hairline cards, no decorative shadows).
+user study. 
 
 > ⚠️ **Scope & ethics.** SIMShield is a **defensive detection and awareness**
 > tool only. It does **not** perform, simulate, or assist any SIM-swap /
